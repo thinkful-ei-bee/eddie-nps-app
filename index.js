@@ -14,22 +14,24 @@ function formatQueryParams(params) {
 function displayResults(responseJson) {
   // if there are previous results, remove them
   $('#results-list').empty();
-  // iterate through the items array
+  // iterate through the data array
   for (let i = 0; i < responseJson.data.length; i++){
-    // for each video object in the items 
+    // for each park object in the data 
     //array, add a list item to the results 
-    //list with the video title, description,
-    //and thumbnail
+    //list with the park name/state location, description,
+    //and link to website
     $('#results-list').append(
-      `<li><h3>${responseJson.data[i].fullName}</h3>
+      `<li><h3>${responseJson.data[i].fullName}, ${responseJson.data[i].states} </h3>
       <p>
         ${responseJson.data[i].description}
       </p>
       <p>
+        Address: 
        <a href="${responseJson.data[i].url}">Website</a>
       </p>
       </li>`
-    )};
+    );
+  }
   //display the results section  
   $('#results').removeClass('hidden');
 }
@@ -44,7 +46,7 @@ function getParks(query, stateCode, limit=10) {
   const queryString = formatQueryParams(params);
   const url = searchURL + '?' + queryString;
 
-  console.log(url);
+  //console.log(url);
 
   fetch(url)
     .then(response => {
@@ -54,6 +56,7 @@ function getParks(query, stateCode, limit=10) {
       throw new Error(response.statusText);
     })
     .then(responseJson => {
+      console.log(responseJson);
       displayResults(responseJson);
     })
     .catch(err => {
