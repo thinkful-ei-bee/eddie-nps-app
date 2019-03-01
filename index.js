@@ -2,7 +2,7 @@
 
 // put your own value below!
 const apiKey = 'q4VHcDlIpZh33evWMXrSEYFQRDOKW8BGY6LaANkI'; 
-const searchURL = 'https://developer.nps.gov/api/v1/parks?parkCode=acad&api_key=INSERT-API-KEY-HERE';
+const searchURL = 'https://developer.nps.gov/api/v1/parks';
 
 
 function formatQueryParams(params) {
@@ -13,18 +13,21 @@ function formatQueryParams(params) {
 
 function displayResults(responseJson) {
   // if there are previous results, remove them
-  console.log(responseJson);
   $('#results-list').empty();
   // iterate through the items array
-  for (let i = 0; i < responseJson.items.length; i++){
+  for (let i = 0; i < responseJson.data.length; i++){
     // for each video object in the items 
     //array, add a list item to the results 
     //list with the video title, description,
     //and thumbnail
     $('#results-list').append(
-      `<li><h3>${responseJson.data[i].title}</h3>
-      <p>${responseJson.data[i].description}</p>
-      <p> ${responseJson.data[i].url}</p>
+      `<li><h3>${responseJson.data[i].fullName}</h3>
+      <p>
+        ${responseJson.data[i].description}
+      </p>
+      <p>
+       <a href="${responseJson.data[i].url}">Website</a>
+      </p>
       </li>`
     )};
   //display the results section  
@@ -33,10 +36,10 @@ function displayResults(responseJson) {
 
 function getParks(query, stateCode, limit=10) {
   const params = {
-    api_key: apiKey,
     q: query,
     stateCode,
     limit,
+    api_key: apiKey,
   };
   const queryString = formatQueryParams(params);
   const url = searchURL + '?' + queryString;
@@ -50,7 +53,9 @@ function getParks(query, stateCode, limit=10) {
       }
       throw new Error(response.statusText);
     })
-    .then(responseJson => displayResults(responseJson))
+    .then(responseJson => {
+      displayResults(responseJson);
+    })
     .catch(err => {
       $('#js-error-message').text(`Something went wrong: ${err.message}`);
     });
